@@ -48,25 +48,34 @@ public final class WebsocketPacketsDecoder extends Decoder {
 		case 1: // denotes a text frame
 			break;
 		case 2: // denotes a binary frame
-			while(msg.getOffset()<msg.getLength()) {
-				int cmd = msg.readByte();
-				switch(cmd) {
-				case 6: // connection status
-					msg.setOffset(msg.getLength());
-					break;
-				case 33: // get index description
-					websocket.addArchive(msg.readUnsignedByte(), msg.readInt(), false);
-					break;
-				case 0:
-				case 1:
+			int cmd = msg.readByte();
+			int request_count = 0;
+			switch(cmd) {
+			case 6: // connection status
+				// msg.setOffset(msg.getLength());
+				break;
+			case 33: // get index description
+				websocket.addArchive(msg.readUnsignedByte(), msg.readInt(), false);
+				break;
+			case 0:
+			case 1:
+				websocket.addArchive(msg.readUnsignedByte(), msg.readInt(), cmd == 1);
+				request_count = (int) msg.getLength()/6;
+				for(int i=0; i < request_count-1; i++) {
+					cmd = msg.readByte();
 					websocket.addArchive(msg.readUnsignedByte(), msg.readInt(), cmd == 1);
-					break;
-				case 17:
-					websocket.addArchive(msg.readUnsignedByte(), msg.readInt(), false);
-					break;
-				default:
-					break;
 				}
+				break;
+			case 17:
+				websocket.addArchive(msg.readUnsignedByte(), msg.readInt(), false);
+				request_count = (int) msg.getLength()/6;
+				for(int i=0; i < request_count-1; i++) {
+					cmd = msg.readByte();
+					websocket.addArchive(msg.readUnsignedByte(), msg.readInt(), false);
+				}
+				break;
+			default:
+				break;
 			}
 			break;
 		case 8: // denotes a connection close

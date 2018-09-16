@@ -139,7 +139,7 @@ public final class WebsocketPacketsEncoder extends Encoder {
 				} else {
 					buffer.writeByte((byte) 127);
 					// buffer.writeShort(0);
-					buffer.writeLong(102400-5);// length);
+					buffer.writeLong(length - (102400-5)*i < 102400-5 ? length-(102400-5)*i : 102400-5);// length);
 				}
 			}
 			
