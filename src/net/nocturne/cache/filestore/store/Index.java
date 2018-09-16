@@ -70,6 +70,15 @@ public final class Index {
 			return -1;
 		return table.getArchives()[archiveId].getValidFileIds().length;
 	}
+	
+	public int getAllFilesCount() {
+		int count = 0;
+		for(int i=0; i<table.getArchives().length; i++) {
+			count += getLastFileId(i);
+		}
+		
+		return count;
+	}
 
 	public boolean archiveExists(int archiveId) {
 		if (archiveId < 0)

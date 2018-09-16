@@ -269,7 +269,7 @@ public class Appearence implements Serializable {
 		if (transformedNpcId >= 0) {
 			stream.writeShort(-1); // 65535 tells it a npc
 			stream.writeBigSmart(transformedNpcId);
-			Item cape = player.getEquipment().getItem(Equipment.SLOT_CAPE);
+			Item cape = player != null ? player.getEquipment().getItem(Equipment.SLOT_CAPE) : null;
 			stream.writeByte(cape != null ? cape.getDefinitions().getTeamId()
 					: 0); // team
 		} else {
@@ -413,8 +413,10 @@ public class Appearence implements Serializable {
 		int renderEmote = getRenderEmote();
 		stream.writeShort(renderEmote);
 
-		player.getPackets().sendCSVarInteger(779, renderEmote);
-
+		if(player != null) {
+			player.getPackets().sendCSVarInteger(779, renderEmote);
+		}
+		
 		byte[] data = new byte[stream.getOffset()];
 		System.arraycopy(stream.getBuffer(), 0, data, 0, data.length);
 		return data;
@@ -605,10 +607,10 @@ public class Appearence implements Serializable {
 			if (data != null && !data.containsKey(2805))
 				return defs.renderEmote;
 		}
-		if (player.getCombatDefinitions().isSheathe()
+		if (player != null && player.getCombatDefinitions().isSheathe()
 				&& !player.getCombatDefinitions().isCombatStance())
 			return 2699;
-		return player.getEquipment().getWeaponStance();
+		return player != null ? player.getEquipment().getWeaponStance() : 0;
 	}
 
 	public void resetAppearence() {

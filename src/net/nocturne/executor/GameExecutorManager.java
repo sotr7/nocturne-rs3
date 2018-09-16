@@ -9,6 +9,7 @@ public final class GameExecutorManager {
 	public static volatile boolean executorShutdown;
 	public static WorldThread worldThread;
 	public static GrabThread grabThread;
+	public static WebsocketThread websocketThread;
 	public static PlayerHandlerThread playerHandlerThread;
 	public static Timer fastExecutor;
 	public static ScheduledExecutorService slowExecutor;
@@ -16,12 +17,14 @@ public final class GameExecutorManager {
 	public static void init() {
 		worldThread = new WorldThread();
 		grabThread = new GrabThread();
+		websocketThread = new WebsocketThread();
 		playerHandlerThread = new PlayerHandlerThread();
 		fastExecutor = new Timer("Fast Executor");
 		slowExecutor = Executors
 				.newSingleThreadScheduledExecutor(new SlowThreadFactory());
 		worldThread.start();
 		grabThread.start();
+		websocketThread.start();
 		playerHandlerThread.start();
 	}
 
@@ -48,6 +51,14 @@ public final class GameExecutorManager {
 			while (true) {
 				try {
 					grabThread.join();
+					break;
+				} catch (InterruptedException e) {
+				}
+			}
+      
+			while (true) {
+				try {
+					websocketThread.join();
 					break;
 				} catch (InterruptedException e) {
 				}

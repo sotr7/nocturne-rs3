@@ -9,16 +9,19 @@ import org.jboss.netty.channel.ChannelFuture;
 
 import net.nocturne.game.player.Player;
 import net.nocturne.grab.Grab;
+import net.nocturne.websocket.Websocket;
 import net.nocturne.network.decoders.ClientPacketsDecoder;
 import net.nocturne.network.decoders.Decoder;
 import net.nocturne.network.decoders.GrabPacketsDecoder;
 import net.nocturne.network.decoders.LoginPacketsDecoder;
 import net.nocturne.network.decoders.WorldLoginPacketsDecoder;
 import net.nocturne.network.decoders.WorldPacketsDecoder;
+import net.nocturne.network.decoders.WebsocketPacketsDecoder;
 import net.nocturne.network.encoders.Encoder;
 import net.nocturne.network.encoders.GrabPacketsEncoder;
 import net.nocturne.network.encoders.LoginPacketsEncoder;
 import net.nocturne.network.encoders.WorldPacketsEncoder;
+import net.nocturne.network.encoders.WebsocketPacketsEncoder;
 import net.nocturne.stream.OutputStream;
 
 public class Session {
@@ -91,6 +94,9 @@ public class Session {
 		case 4:
 			decoder = new WorldLoginPacketsDecoder(this, (Player) attachement);
 			break;
+		case 5:
+			decoder = new WebsocketPacketsDecoder(this, (Websocket) attachement);
+			break;
 		case -1:
 		default:
 			decoder = null;
@@ -113,6 +119,9 @@ public class Session {
 		case 2:
 			encoder = new WorldPacketsEncoder(this, (Player) attachement);
 			break;
+		case 3:
+			encoder = new WebsocketPacketsEncoder(this, (Websocket) attachement);
+			break;
 		case -1:
 		default:
 			encoder = null;
@@ -132,6 +141,10 @@ public class Session {
 		return (WorldPacketsEncoder) encoder;
 	}
 
+	public WebsocketPacketsEncoder getWebsocketPackets() {
+		return (WebsocketPacketsEncoder) encoder;
+	}
+	
 	public String getIP() {
 		/*
 		 * if (Settings.AR_PROTECTION) { if (client == null) return null; return

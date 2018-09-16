@@ -825,6 +825,87 @@ public class Player extends Entity {
 		ownedObjectsManagerKeys = new LinkedList<String>();
 		resetILayoutVars();
 	}
+	
+	public Player(Session session) {
+		super(Settings.STARTER_LOCATION);
+		super.setHitpoints(1000);
+		this.session = session;
+		loginCount = 0;
+		slayerCreatures = new HashMap<String, Integer>();
+		vars = new HashMap<Integer, Integer>();
+		varbits = new HashMap<Integer, Integer>();
+		varbits.put(20940, 120);
+		varbits.put(382, 11);
+		varbits.put(9513, 1);
+		acceptAid = new AcceptAid(this);
+		donationManager = new DonationManager();
+		appearence = new Appearence();
+		inventory = new Inventory();
+		moneyPouch = new MoneyPouch();
+		equipment = new Equipment();
+		skills = new Skills();
+		combatDefinitions = new CombatDefinitions();
+		thresholdManager = new DropThresholdManager(this);
+		prayer = new Prayer();
+		bank = new Bank();
+		bank2 = new Bank();
+		controllerManager = new ControllerManager();
+		musicsManager = new MusicsManager();
+		emotesManager = new EmotesManager();
+		notes = new Notes();
+		toolbelt = new Toolbelt();
+		dominionTower = new DominionTower();
+		charges = new ChargesManager();
+		auraManager = new AuraManager();
+		questManager = new QuestManager();
+		jobManager = new JobManager(this);
+		pMissions = new PortMissions(this);
+		petManager = new PetManager();
+		farmingManager = new FarmingManager();
+		geManager = new GrandExchangeManager();
+		slayerManager = new SlayerManager();
+		treasureHunter = new TreasureHunter();
+		treasureTrailsManager = new TreasureTrailsManager();
+		coalTrucksManager = new CoalTrucksManager();
+		dungManager = new DungManager();
+		house = new House();
+		actionbar = new ActionBar();
+		skillTasks = new SkillerTasks();
+		reaperTasks = new Reaper();
+		doomsayerManager = new DoomsayerManager();
+		timersManager = new TimersManager();
+		playerExamineManager = new PlayerExamineManager();
+		cosmeticsManager = new CosmeticsManager();
+		compCapeManager = new CompletionistCapeManager(this);
+		assistanceManager = new AssistanceManager(this);
+		gamePointManager = new GamePointManager(this);
+		playerPorts = new PlayerPorts();
+		isaacKeyPair = new IsaacKeyPair(new int[4]);
+		interfaceManager = new InterfaceManager(this); 
+		// dailyChallengeManager = new DailyChallenge(this);
+		runEnergy = 100;
+		allowChatEffects = true;
+		mouseButtons = true;
+		profanityFilter = true;
+		guidanceSystemHints = true;
+		toogleQuickChat = true;
+		makeXProgressWindow = true;
+		taskInformationWindow = true;
+		rs3Camera = true;
+		targetReticules = true;
+		alwaysShowTargetInformation = true;
+		toggleBuffTimers = true;
+		utcClock = 1;
+		pouches = new int[4];
+		resetBarrows();
+		shosRewards = new boolean[4];
+		warriorPoints = new double[6];
+		subMenus = new int[12];
+		boons = new boolean[15];
+		SkillCapeCustomizer.resetSkillCapes(this);
+		ownedObjectsManagerKeys = new LinkedList<String>();
+		resetILayoutVars();
+	}
 
 	public void init(Session session, boolean lobby, String username,
 			String displayName, String lastGameMAC, String email, int rights,
@@ -1470,7 +1551,7 @@ public class Player extends Entity {
 		if (getPrize() != null)
 			getPackets()
 					.sendGameMessage(
-							"<col=FF0000>You have won the lottery, talk to Gambler to claim your prize.");
+							"<col=FF0000>You have won the lottery, talk to Gambler to claim you)r prize.");
 		if (getRights() == 2 && !getInventory().containsItem(5733, 1))
 			getInventory().addItem(5733, 1);
 		loadVarbits();

@@ -5,6 +5,7 @@ import net.nocturne.cache.Cache;
 import net.nocturne.game.player.Player;
 import net.nocturne.game.player.content.PlayerLook;
 import net.nocturne.grab.Grab;
+import net.nocturne.websocket.Websocket;
 import net.nocturne.network.Session;
 import net.nocturne.stream.InputStream;
 import net.nocturne.stream.OutputStream;
@@ -46,7 +47,9 @@ public final class ClientPacketsDecoder extends Decoder {
 		OutputStream o = new OutputStream(1);
 		o.writeByte(2);
 		session.write(o);
-		Player player = new Player();
+    // Player player = new Player(); // -- original
+		Player player = new Player(session); // to del
+		session.setEncoder(2, player); // to del
 		PlayerLook.openCharacterCustomizing(player, true);
 		return -1;
 	}
@@ -54,53 +57,64 @@ public final class ClientPacketsDecoder extends Decoder {
 	private int decodeWebGrab(InputStream stream) {
 		try {
 			String htmlRequest = new String(stream.getBuffer());
-			if (!htmlRequest.endsWith("\r\n\r\n")) {
-				System.out.println("stop1");
-				return 0;
-			}
-			htmlRequest = htmlRequest.substring(
-					htmlRequest.indexOf("GET /ms?") + 8,
-					htmlRequest.indexOf(" HTTP"));
-			String[] data = htmlRequest.split("&");
-			int m = Integer.parseInt(getVar(data, "m"));
-			int indexId = Integer.parseInt(getVar(data, "a"));
-			int archiveId = Integer.parseInt(getVar(data, "g"));
-			if (m != 0 || archiveId < 0) {
-				session.getChannel().close();
-				return -1;
-			}
-
-			if (indexId != 255
-					&& (Cache.STORE.getIndexes().length <= indexId
-							|| Cache.STORE.getIndexes()[indexId] == null || !Cache.STORE
-								.getIndexes()[indexId].archiveExists(archiveId))) {
-				session.getChannel().close();
-				return -1;
-			}
-			// disable to see what happens
-			if (indexId == 255 && archiveId == 255) {
-				long cb = Long.parseLong(getVar(data, "cb"));
-				if (cb == -1) {
-					session.getChannel().close();
-					return -1;
-				}
+			if(htmlRequest.indexOf("WebSocket") > 0) {
+				Websocket websocket = new Websocket(session, htmlRequest);
+				websocket.init();
+				session.setEncoder(3, websocket);
+				session.setDecoder(5, websocket);
+				
+				session.getWebsocketPackets().sendHandshake();
+				// session.getWebsocketPackets().queueStartupPacket();
+				session.getWebsocketPackets().sendStartUpPacket();
 			} else {
-				int crc = Integer.parseInt(getVar(data, "c"));
-				int revision = Integer.parseInt(getVar(data, "v"));
-				if (crc != Cache.STORE.getIndexes()[indexId].getTable()
-						.getArchives()[archiveId].getCRC()
-						|| revision != Cache.STORE.getIndexes()[indexId]
-								.getTable().getArchives()[archiveId]
-								.getRevision()) {
+				if (!htmlRequest.endsWith("\r\n\r\n")) {
+					System.out.println("stop1");
+					return 0;
+				}
+				htmlRequest = htmlRequest.substring(
+						htmlRequest.indexOf("GET /ms?") + 8,
+						htmlRequest.indexOf(" HTTP"));
+				String[] data = htmlRequest.split("&");
+				int m = Integer.parseInt(getVar(data, "m"));
+				int indexId = Integer.parseInt(getVar(data, "a"));
+				int archiveId = Integer.parseInt(getVar(data, "g"));
+				if (m != 0 || archiveId < 0) {
 					session.getChannel().close();
 					return -1;
 				}
-
+	
+				if (indexId != 255
+						&& (Cache.STORE.getIndexes().length <= indexId
+								|| Cache.STORE.getIndexes()[indexId] == null || !Cache.STORE
+									.getIndexes()[indexId].archiveExists(archiveId))) {
+					session.getChannel().close();
+					return -1;
+				}
+				// disable to see what happens
+				if (indexId == 255 && archiveId == 255) {
+					long cb = Long.parseLong(getVar(data, "cb"));
+					if (cb == -1) {
+						session.getChannel().close();
+						return -1;
+					}
+				} else {
+					int crc = Integer.parseInt(getVar(data, "c"));
+					int revision = Integer.parseInt(getVar(data, "v"));
+					if (crc != Cache.STORE.getIndexes()[indexId].getTable()
+							.getArchives()[archiveId].getCRC()
+							|| revision != Cache.STORE.getIndexes()[indexId]
+									.getTable().getArchives()[archiveId]
+									.getRevision()) {
+						session.getChannel().close();
+						return -1;
+					}
+	
+				}
+				session.setDecoder(-1);
+				session.setEncoder(0);
+				// session.getGrabPackets().sendCacheArchiveWeb( new
+				// ArchiveRequest(indexId, archiveId));
 			}
-			session.setDecoder(-1);
-			session.setEncoder(0);
-			// session.getGrabPackets().sendCacheArchiveWeb( new
-			// ArchiveRequest(indexId, archiveId));
 			return stream.getBuffer().length;
 		} catch (Throwable e) {
 			e.printStackTrace();

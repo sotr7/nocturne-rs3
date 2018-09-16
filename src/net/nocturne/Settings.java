@@ -86,7 +86,7 @@ public final class Settings {
 			YOUR_FEEDBACK = 15, EVENTS = 16;
 
 	public static final boolean SQL = false;
-	public static final boolean HTTP = false;
+	public static final boolean HTTP = true;
 	public static final boolean DAILY_BACKUP = false;
 
 	public static final int STARTER_GUIDE = 0;
@@ -172,6 +172,8 @@ public final class Settings {
 	public static final BigInteger MODULUS = GRAB_SERVER_MODULUS;
 	public static final BigInteger PRIVATE_EXPONENT = GRAB_SERVER_PRIVATE_EXPONENT;
 
+	public static String WEBSOCKET_HEADER = "HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\n";
+	public static String WEBSOCKET_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 	public static InetSocketAddress LOGIN_SERVER_ADDRESS_BASE;
 	public static InetSocketAddress LOGIN_CLIENT_ADDRESS_BASE;
 	public static WorldInformation[] WORLDS_INFORMATION;

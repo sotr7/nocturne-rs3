@@ -36,8 +36,8 @@ public final class Cache {
 			}
 			stream.writeInt(STORE.getIndexes()[index].getCRC());
 			stream.writeInt(STORE.getIndexes()[index].getTable().getRevision());
-			stream.writeInt(0);
-			stream.writeInt(0);
+			stream.writeInt(STORE.getIndexes()[index].getLastArchiveId());
+			stream.writeInt(STORE.getIndexes()[index].getAllFilesCount());
 			stream.writeBytes(STORE.getIndexes()[index].getWhirlpool());
 			// Logger.log("Cache", "Whirlpool Length: " +
 			// STORE.getIndexes()[index].getWhirlpool().length);
