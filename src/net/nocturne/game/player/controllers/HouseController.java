@@ -137,11 +137,11 @@ public class HouseController extends Controller {
 				|| object.getId() == HouseConstants.HObject.TEAK_LARDER.getId()
 				|| object.getId() == HouseConstants.HObject.WOODEN_LARDER
 						.getId()) {
-			player.getDialogueManager().startDialogue("LarderDialouge",
+			player.getDialogueManager().startDialogue("LarderDialogue",
 					object.getId());
 		} else if (HouseConstants.Builds.SHELVES.containsObject(object)
 				|| HouseConstants.Builds.SHELVES_2.containsObject(object)) {
-			player.getDialogueManager().startDialogue("POHShelvesDialouge",
+			player.getDialogueManager().startDialogue("POHShelvesDialogue",
 					object.getId());
 		} else if (HouseConstants.Builds.DRESSERS.containsObject(object)) {
 			PlayerLook.openHairdresserSalon(player, true);

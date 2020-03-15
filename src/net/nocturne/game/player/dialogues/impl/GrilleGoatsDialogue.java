@@ -2,7 +2,7 @@ package net.nocturne.game.player.dialogues.impl;
 
 import net.nocturne.game.player.dialogues.Dialogue;
 
-public class GrilleGoatsDialouge extends Dialogue {
+public class GrilleGoatsDialogue extends Dialogue {
 
 	public static final int GRILLEGOATS = 3807;
 

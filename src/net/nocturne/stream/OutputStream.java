@@ -31,6 +31,15 @@ public final class OutputStream extends Stream {
 			this.length = newBuffer.length;
 		}
 	}
+	
+	public void checkCapacityPosition(int position) {
+		if (position >= getBuffer().length) {
+			byte[] newBuffer = new byte[position + 16];
+			System.arraycopy(getBuffer(), 0, newBuffer, 0, getBuffer().length);
+			setBuffer(newBuffer);
+			this.length = newBuffer.length;
+		}
+	}
 
 	public void initBitAccess() {
 		bitPosition = getOffset() * 8;
@@ -71,6 +80,37 @@ public final class OutputStream extends Stream {
 		getBuffer()[position] = (byte) i;
 	}
 
+	public void writeBytes1(byte[] b, int offset, int length) {
+		checkCapacityPosition(this.getOffset() + length);
+		if(this.getOffset() < 0 || offset < 0 || length < 0 || b.length < length) {
+			System.out.println("offset negative" + this.getOffset()+offset);
+		}
+		if(offset > 0 || offset < 0) {
+			System.out.println("offset: "+offset);
+		}
+		if(offset < 0) {
+			offset = 0;
+		}
+		if(b.length < offset + length) {
+			length = b.length - offset;
+			if(length < 0)
+				length = 0;
+		}
+		if(getBuffer().length -16 < this.getOffset()+length -1 ) {
+			System.out.println("offset negative pos" +(getBuffer().length -16) +": "+ (this.getOffset()+length -1));
+		}
+		System.arraycopy(b, offset, getBuffer(), this.getOffset(), length);
+		this.setOffset(this.getOffset() + (length - offset));
+	}
+
+	public void writeBytes1(byte[] b) {
+		int offset = 0;
+		int length = b.length;
+		checkCapacityPosition(this.getOffset() + length - offset);
+		System.arraycopy(b, offset, getBuffer(), this.getOffset(), length);
+		this.setOffset(this.getOffset() + (length - offset));
+	}
+	
 	public void writeBytes(byte[] b, int offset, int length) {
 		expand(this.getOffset() + length - 1);
 		System.arraycopy(b, offset, getBuffer(), this.getOffset(), length);
@@ -275,6 +315,9 @@ public final class OutputStream extends Stream {
 		int size = getOffset() - (opcodeStart + 2);
 		writeByte(size >> 8, opcodeStart++);
 		writeByte(size, opcodeStart);
+	}
+	public void setBuffer(byte[] buffer) {
+		this.buffer = buffer;
 	}
 
 }

@@ -4,7 +4,7 @@ import net.nocturne.game.item.Item;
 import net.nocturne.game.player.actions.skills.crafting.AccessorySmithing;
 import net.nocturne.game.player.dialogues.Dialogue;
 
-public class ImbueingDialouge extends Dialogue {
+public class ImbueingDialogue extends Dialogue {
 
 	@Override
 	public void start() {

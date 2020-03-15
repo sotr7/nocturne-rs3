@@ -7,6 +7,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import net.nocturne.utils.NameRandomizer;
+
 import net.nocturne.Settings;
 import net.nocturne.cache.loaders.ItemDefinitions;
 import net.nocturne.cache.loaders.QuickChatOptionDefinition;
@@ -191,12 +193,17 @@ public final class WorldPacketsDecoder extends Decoder {
 	private final static int REPORT_ABUSE_PACKET = -1;
 	private final static int GRAND_EXCHANGE_ITEM_SELECT_PACKET = 34;
 	private final static int WORLD_LIST_UPDATE = 108;
-	private final static int UPDATE_GAMEBAR_PACKET = 83;
+	private final static int UPDATE_GAMEBAR_PACKET = -1; // wrong!!!
 	private final static int NIS_VAR_PACKET = 46;
 	private final static int MUSIC_PACKET = 82;
 	private final static int REQUEST_PLAY_MUSIC_PACKET = 93;
 	private final static int CUTSCENE_DONE_PACKET = 19;
 	private final static int GARBAGE_CLEAR_PACKET = 8;
+	private final static int CHECK_CREATION_NAME_PACKET         = 115; // 115 J876
+	private final static int CHECK_CREATION_EMAIL_PACKET        = 83; // 83 J876
+	private final static int CHECK_CREATION_AGE_PACKET          = 117; // 117 J876
+	private final static int CHECK_CREATION_FINAL_PACKET        = 74; // 74 J876
+	private final static int CREATION_RUNDOMIZE_NAME_PACKET     = 57; // 57 J876
 
 	static {
 		loadPacketSizes();
@@ -347,7 +354,10 @@ public final class WorldPacketsDecoder extends Decoder {
 		while (stream.getRemaining() > 0 && !player.hasFinished()) {
 
 			int start = stream.getOffset();
-			int opcode = stream.readPacket(player);
+			int opcode = stream.readPacket(player);//stream.readByte();//
+			stream.setOffset(start);
+			// System.out.println(opcode + " real: " + stream.readUnsignedByte() + " stack: " + stream.readUnsignedByte() + " " + stream.readUnsignedByte() + " " + stream.readUnsignedByte() + " " + stream.readUnsignedByte() + " " + stream.readUnsignedByte() + " " + stream.readUnsignedByte() + " " + stream.readUnsignedByte() + " " + stream.readUnsignedByte());
+			stream.setOffset(start + 1);
 			if (opcode < 0 || opcode >= PACKET_SIZES.length) {
 				if (Settings.DEBUG)
 					System.out.println("Invalid opcode: " + opcode + ".");
@@ -3319,6 +3329,25 @@ public final class WorldPacketsDecoder extends Decoder {
 		} else if (opcode == GRAND_EXCHANGE_ITEM_SELECT_PACKET) {
 			int itemId = stream.readUnsignedShort();
 			player.getGeManager().chooseItem(itemId);
+		} else if (opcode == CHECK_CREATION_NAME_PACKET  ) {
+			stream.xteaDecrypt(player.getIsaacKeyPair().getIsaacKeys(), stream.getOffset(), stream.getLength());
+			String name = stream.readString();
+			player.getPackets().sendCreationNameCheck(2);
+			// TODO macke check on name!!!
+		} else if (opcode == CHECK_CREATION_EMAIL_PACKET ) {
+			stream.xteaDecrypt(player.getIsaacKeyPair().getIsaacKeys(), stream.getOffset(), stream.getLength());
+			String email = stream.readString();
+			player.getPackets().sendCreationEmailCheck(2); // 0 - error, 2 - "masked - ok (you meen @ & so on)", 3 - err, 
+			// TODO macke check on email!!!
+		} else if (opcode == CHECK_CREATION_AGE_PACKET ) {
+			player.getPackets().sendCreationAgeCheck(38); // 0 - error, 2 - "masked - ok (you meen @ & so on)", 3 - err, 
+		} else if (opcode == CHECK_CREATION_FINAL_PACKET ) {
+			int age = stream.readUnsignedByte();
+			player.getPackets().sendCreationFinalCheck(38); //  2 - "ok" 
+			// TODO macke check on email!!!
+		} else if (opcode == CREATION_RUNDOMIZE_NAME_PACKET  ) {
+			String name = NameRandomizer.randomName();
+			player.getPackets().sendCreationRundomName(name);
 		} else if (opcode == 30) {
 			switch (stream.getLength()) {
 			case 24:

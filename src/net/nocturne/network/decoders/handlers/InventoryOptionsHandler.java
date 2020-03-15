@@ -116,7 +116,7 @@ import net.nocturne.game.player.content.grandExchange.GrandExchange;
 import net.nocturne.game.player.controllers.Wilderness;
 import net.nocturne.game.player.dialogues.Dialogue;
 import net.nocturne.game.player.dialogues.impl.AmuletAttaching;
-import net.nocturne.game.player.dialogues.impl.AttachingOrbsDialouge;
+import net.nocturne.game.player.dialogues.impl.AttachingOrbsDialogue;
 import net.nocturne.game.player.dialogues.impl.CombinationsD.Combinations;
 import net.nocturne.game.player.dialogues.impl.SqirkFruitSqueeze;
 import net.nocturne.game.player.dialogues.impl.SqirkFruitSqueeze.SqirkFruit;
@@ -1932,7 +1932,7 @@ public class InventoryOptionsHandler {
 			// return;
 			if (ItemDyes.dyeItem(player, usedWithId, itemUsedId))
 				return;
-			else if (AttachingOrbsDialouge.isAttachingOrb(player, itemUsed, usedWith))
+			else if (AttachingOrbsDialogue.isAttachingOrb(player, itemUsed, usedWith))
 				return;
 			else if (SmithingCombinations.combineItem(player, usedWith.getId(), itemUsed.getId()))
 				return;

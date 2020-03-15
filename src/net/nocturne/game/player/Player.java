@@ -1157,7 +1157,7 @@ public class Player extends Entity {
 				clanName = null;
 	}
 
-	void sendLobbyVars() {
+	public void sendLobbyVars() {
 		getPackets().refreshLobbyInformation();
 		// black screen if those not enabled
 		getVarsManager().sendVar(1751, 6757431); // x

@@ -5,7 +5,7 @@ import net.nocturne.game.player.dialogues.Dialogue;
 import net.nocturne.network.decoders.handlers.NPCHandler;
 import net.nocturne.stream.InputStream;
 
-public class DefaultTradeDialouge extends Dialogue {
+public class DefaultTradeDialogue extends Dialogue {
 
 	InputStream stream;
 	int npcId;

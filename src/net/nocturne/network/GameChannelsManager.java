@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 
 import net.nocturne.Settings;
+import net.nocturne.network.decoders.WebsocketPacketsDecoder;
 import net.nocturne.stream.InputStream;
 import net.nocturne.utils.Logger;
 
@@ -114,7 +115,11 @@ public final class GameChannelsManager extends SimpleChannelHandler {
 
 			try {
 				InputStream is = new InputStream(b);
-				session.bufferOffset = session.getDecoder().decode(is);
+				if(!session.isWebsocket() || session.getDecoder() instanceof WebsocketPacketsDecoder) {
+					session.bufferOffset = session.getDecoder().decode(is);
+				} else {
+					session.getDecoder().decode(new InputStream(session.decodeWebsocketMsg(b)));
+				}
 				if (session.bufferOffset < 0) { // drop
 					session.buffer = new byte[0];
 					session.bufferOffset = 0;

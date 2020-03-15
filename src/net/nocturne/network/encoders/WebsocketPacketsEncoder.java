@@ -82,9 +82,11 @@ public final class WebsocketPacketsEncoder extends Encoder {
 			// stream.writeByte(0);
 			stream.writeString(Settings.WEBSOCKET_HEADER);
 			String str = new String(encodedBytes);
+			stream.setOffset(stream.getOffset()-1);
 			stream.writeString("Sec-WebSocket-Accept: "+str+"\r\n");
 			// stream.writeBytes(encodedBytes);
 			// stream.writeString("\r\n");
+			stream.setOffset(stream.getOffset()-1);
 			stream.writeString("Sec-WebSocket-Protocol: " + websocket.getProtocolName() + "\r\n\r\n");
 			stream.setOffset(stream.getOffset()-1);
 			
@@ -143,8 +145,11 @@ public final class WebsocketPacketsEncoder extends Encoder {
 				}
 			}
 			
-			buffer.writeBytes(archive, (102400-5)*i, length-(102400-5)*i > 102400-5? 102400-5 : length-(102400-5)*i);
-			session.write(buffer);
+			if(length-(102400-5)*i > 0) {
+				buffer.writeBytes(archive, (102400-5)*i, length-(102400-5)*i > 102400-5? 102400-5 : length-(102400-5)*i);
+				buffer.setOffset(buffer.getBuffer().length);
+				session.write(buffer);
+			}
 		}
 		
 		return true;

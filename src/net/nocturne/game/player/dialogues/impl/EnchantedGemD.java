@@ -31,16 +31,16 @@ public class EnchantedGemD extends Dialogue {
 							"You currently don't have a task.");
 					return;
 				}
-				String[] tipDialouges = player.getSlayerManager()
+				String[] tipDialogues = player.getSlayerManager()
 						.getCurrentTask().getTips();
-				if (tipDialouges != null && tipDialouges.length != 0) {
-					String chosenDialouge = tipDialouges[Utils
-							.random(tipDialouges.length)];
-					if (chosenDialouge == null || chosenDialouge.equals(""))
+				if (tipDialogues != null && tipDialogues.length != 0) {
+					String chosenDialogue = tipDialogues[Utils
+							.random(tipDialogues.length)];
+					if (chosenDialogue == null || chosenDialogue.equals(""))
 						sendNPCDialogue(npcId, 9827,
 								"I don't have any tips for you currently.");
 					else
-						sendNPCDialogue(npcId, 9827, chosenDialouge);
+						sendNPCDialogue(npcId, 9827, chosenDialogue);
 				} else
 					sendNPCDialogue(npcId, 9827,
 							"I don't have any tips for you currently.");

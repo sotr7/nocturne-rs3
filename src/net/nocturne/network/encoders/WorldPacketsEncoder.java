@@ -1855,4 +1855,40 @@ public class WorldPacketsEncoder extends Encoder {
 		player.getVarsManager().sendVarBit(id, value);
 	}
 
+	public void sendCreationRundomName(String name) {
+		OutputStream stream = new OutputStream();
+		stream.writePacketVarByte(player, 97); // J788 // 97); // J876
+		stream.writeString(name);
+		stream.endPacketVarByte();
+		session.write(stream);
+	}
+
+	public void sendCreationNameCheck(int check) {
+		OutputStream stream = new OutputStream(2);
+		stream.writePacket(player, 162); // J788 // 162); // J876
+		stream.writeByte(check);
+		session.write(stream);
+	}
+
+	public void sendCreationEmailCheck(int check) {
+		OutputStream stream = new OutputStream(2);
+		stream.writePacket(player, 7); // J788 // 7); // J876
+		stream.writeByte(check);
+		session.write(stream);
+	}
+
+	public void sendCreationFinalCheck(int check) {
+		OutputStream stream = new OutputStream(2);
+		stream.writePacket(player, 131); // J788 // 155); // J876
+		stream.writeByte(check);
+		session.write(stream);
+	}
+	
+	public void sendCreationAgeCheck(int check) {
+		OutputStream stream = new OutputStream(2);
+		stream.writePacket(player, 155); // J788 // 155); // J876
+		stream.writeByte(check);
+		session.write(stream);
+	}
+
 }

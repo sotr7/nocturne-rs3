@@ -1115,6 +1115,7 @@ public class InterfaceManager {
 				}
 			} else if (subMenu == 2) {// interface
 				setMenuInterface(0, 1442);
+				setMenuInterface(1, 1214);
 				player.getPackets().sendIComponentSettings(1442, 130, 0, 2, 2); // unlocks
 			} else if (subMenu == 3) {// controls
 				setMenuInterface(0, 1444);

@@ -2,7 +2,7 @@ package net.nocturne.game.player.dialogues.impl;
 
 import net.nocturne.game.player.dialogues.Dialogue;
 
-public class ForfeitDialouge extends Dialogue {
+public class ForfeitDialogue extends Dialogue {
 
 	@Override
 	public void start() {

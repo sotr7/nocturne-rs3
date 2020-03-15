@@ -5,7 +5,7 @@ import net.nocturne.game.player.TreasureTrailsManager;
 import net.nocturne.game.player.dialogues.Dialogue;
 import net.nocturne.utils.Utils;
 
-public class UgiDialouge extends Dialogue {
+public class UgiDialogue extends Dialogue {
 
 	@Override
 	public void start() {

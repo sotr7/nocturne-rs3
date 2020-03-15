@@ -32,7 +32,7 @@ public final class Settings {
 	public static boolean HOSTED = hostName() ? true : false;
 
 	public static final String VPS1_IP = HOSTED ? "104.155.26.178"
-			: "127.0.0.1";
+			: "192.168.1.119";
 
 	public static final String UPDATE_TOPIC_TITLE = "";
 	public static final String UPDATE_TOPIC_ID = "";
@@ -178,7 +178,7 @@ public final class Settings {
 	public static InetSocketAddress LOGIN_CLIENT_ADDRESS_BASE;
 	public static WorldInformation[] WORLDS_INFORMATION;
 	public static final InetSocketAddress GAME_ADDRESS_BASE = new InetSocketAddress(
-			Settings.HOSTED ? "10.132.0.2" : "127.0.0.1", 43593);
+			Settings.HOSTED ? "10.132.0.2" : "192.168.1.119", 43595);
 
 	public static boolean underDevelopment(Player player) {
 		if (!Settings.DEBUG) {
@@ -191,9 +191,9 @@ public final class Settings {
 
 	static void init() {
 		LOGIN_SERVER_ADDRESS_BASE = new InetSocketAddress(
-				HOSTED ? "10.132.0.2" : "127.0.0.1", 7777);
+				HOSTED ? "10.132.0.2" : "127.0.0.1", 7787);
 		LOGIN_CLIENT_ADDRESS_BASE = new InetSocketAddress(
-				HOSTED ? "10.132.0.2" : "127.0.0.1", 7778);
+				HOSTED ? "10.132.0.2" : "127.0.0.1", 7788);
 		
 			WORLDS_INFORMATION = new WorldInformation[] {
 					new WorldInformation(1, 0, "World1", 0, 0x2 | 0x8, "Nocturne :D", "10.132.0.2", 100),

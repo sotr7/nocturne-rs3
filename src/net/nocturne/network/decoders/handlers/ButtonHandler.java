@@ -943,7 +943,7 @@ public class ButtonHandler {
 			else if (componentId == 14) {
 				player.getInterfaceManager().openMenu(8,
 						player.getSubMenus()[8] + 1);
-			} else if (componentId == 36)
+			} else if (componentId == 42)
 				player.getInterfaceManager().openRibbonSetup();
 		} else if (interfaceId == 970) {
 			if (componentId == 11 || componentId == 14 || componentId == 18

@@ -6943,7 +6943,7 @@ public final class ObjectHandler {
 								&& object.getX() == 3047
 								&& object.getY() == 4493) {
 							player.getDialogueManager().startDialogue(
-									"ImbueingDialouge", itemId);
+									"ImbueingDialogue", itemId);
 						}
 					} else {
 						switch (objectDef.name.toLowerCase()) {

@@ -4,7 +4,7 @@ import net.nocturne.game.player.content.CarrierTravel;
 import net.nocturne.game.player.content.CarrierTravel.Carrier;
 import net.nocturne.game.player.dialogues.Dialogue;
 
-public class BoatingDialouge extends Dialogue {
+public class BoatingDialogue extends Dialogue {
 
 	private int npcId, cost;
 	private boolean returning;

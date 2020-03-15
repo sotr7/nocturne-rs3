@@ -70,7 +70,7 @@ import net.nocturne.game.player.content.activities.minigames.Sawmill;
 import net.nocturne.game.player.content.activities.minigames.SorceressGarden;
 import net.nocturne.game.player.content.activities.minigames.pest.CommendationExchange;
 import net.nocturne.game.player.controllers.RuneEssenceController;
-import net.nocturne.game.player.dialogues.impl.BoatingDialouge;
+import net.nocturne.game.player.dialogues.impl.BoatingDialogue;
 import net.nocturne.game.player.dialogues.impl.FremennikShipmaster;
 import net.nocturne.game.player.dialogues.impl.cities.taverly.PetShopOwner;
 import net.nocturne.stream.InputStream;
@@ -1244,9 +1244,9 @@ public class NPCHandler {
 			npc.faceEntity(player);
 			if (player.getTreasureTrailsManager().useNPC(npc))
 				return;
-			Object[] shipAttributes = BoatingDialouge.getBoatForShip(npc.getId());
+			Object[] shipAttributes = BoatingDialogue.getBoatForShip(npc.getId());
 			if (shipAttributes != null)
-				player.getDialogueManager().startDialogue("BoatingDialouge", npc.getId());
+				player.getDialogueManager().startDialogue("BoatingDialogue", npc.getId());
 			else if (npc.getId() == 3810)
 				GnomeGlider.sendInterface(player);
 			else if (npc.getId() == 3809)
@@ -1264,7 +1264,7 @@ public class NPCHandler {
 			else if (npc.getId() == 3709)
 				player.getDialogueManager().startDialogue("MrEx", npc.getId());
 			else if (npc.getId() == 5141)
-				player.getDialogueManager().startDialogue("UgiDialouge", npc);
+				player.getDialogueManager().startDialogue("UgiDialogue", npc);
 			else if (npc.getId() == 15513 || npc.getId() >= 11303 && npc.getId() <= 11307)
 				player.getDialogueManager().startDialogue("ServantDialogue", npc.getId());
 			else if (npc.getId() == 2290)
@@ -1470,7 +1470,7 @@ public class NPCHandler {
 			else if (npc.getName().toLowerCase().contains("impling")) {
 				FlyingEntityHunter.captureFlyingEntity(player, npc);
 			} else if (npc.getId() == 7065 || npc.getId() == 7066) {
-				player.getDialogueManager().startDialogue("DefaultTradeDialouge", npc.getId(), stream);
+				player.getDialogueManager().startDialogue("DefaultTradeDialogue", npc.getId(), stream);
 			} else {
 				switch (npc.getDefinitions().name.toLowerCase()) {
 				case "void knight":
@@ -2043,7 +2043,7 @@ public class NPCHandler {
 				CommendationExchange.openExchangeShop(player);
 				break;
 			}
-			Object[] shipAttributes = BoatingDialouge.getBoatForShip(npc.getId());
+			Object[] shipAttributes = BoatingDialogue.getBoatForShip(npc.getId());
 			if (shipAttributes != null) {
 				CarrierTravel.sendCarrier(player, (Carrier) shipAttributes[0], (boolean) shipAttributes[1]);
 			} else if (npc.getId() == 9707)

@@ -13,7 +13,7 @@ import net.nocturne.network.decoders.handlers.InventoryOptionsHandler;
 /*
  * skill dialogue doesnt exist since rs3 it seems. it does automaticaly 1
  */
-public class AttachingOrbsDialouge extends Dialogue {
+public class AttachingOrbsDialogue extends Dialogue {
 
 	private final static int[] LEVELS = { 66, 58, 54, 62, 77 }, ORBS = { 573,
 			575, 571, 569, 21775 }, STAFFS = { 1397, 1399, 1395, 1393, 21777 };
@@ -108,7 +108,7 @@ public class AttachingOrbsDialouge extends Dialogue {
 				.getId() : item1.getId());
 		if (index == -1)
 			return false;
-		player.getDialogueManager().startDialogue("AttachingOrbsDialouge",
+		player.getDialogueManager().startDialogue("AttachingOrbsDialogue",
 				index);
 		return true;
 	}

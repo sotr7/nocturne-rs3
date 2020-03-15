@@ -1,5 +1,7 @@
 package net.nocturne.network.decoders;
 
+import net.nocturne.network.decoders.LoginPacketsDecoder;
+
 import net.nocturne.Settings;
 import net.nocturne.cache.Cache;
 import net.nocturne.game.player.Player;
@@ -39,19 +41,21 @@ public final class ClientPacketsDecoder extends Decoder {
 	}
 
 	private int decodeAccountCreation(InputStream stream) {
-		String email = stream.readString();
+		// String email = stream.readString();
 		// Yeah nothing is showing up so are you sure 28 is the right one? oohh
 		// one sec i know what it is
-		System.out.println("Email: " + email);
+		// System.out.println("Email: " + email);
 
 		OutputStream o = new OutputStream(1);
 		o.writeByte(2);
 		session.write(o);
     // Player player = new Player(); // -- original
 		Player player = new Player(session); // to del
-		session.setEncoder(2, player); // to del
-		PlayerLook.openCharacterCustomizing(player, true);
-		return -1;
+		session.setEncoder(1); // to del
+		session.setDecoder(2); // to del
+		((LoginPacketsDecoder) session.getDecoder()).decodeAccountCreation(stream, false);
+		// PlayerLook.openCharacterCustomizing(player, true);
+		return stream.getOffset();
 	}
 
 	private int decodeWebGrab(InputStream stream) {
@@ -65,7 +69,9 @@ public final class ClientPacketsDecoder extends Decoder {
 				
 				session.getWebsocketPackets().sendHandshake();
 				// session.getWebsocketPackets().queueStartupPacket();
-				session.getWebsocketPackets().sendStartUpPacket();
+				if(htmlRequest.indexOf("ypsilonCache") > 0) {
+					session.getWebsocketPackets().sendStartUpPacket();
+				}
 			} else {
 				if (!htmlRequest.endsWith("\r\n\r\n")) {
 					System.out.println("stop1");

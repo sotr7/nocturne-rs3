@@ -1,5 +1,7 @@
 package net.nocturne.network.decoders;
 
+import net.nocturne.utils.IsaacKeyPair;
+import net.nocturne.game.player.content.PlayerLook;
 import net.nocturne.Settings;
 import net.nocturne.cache.Cache;
 import net.nocturne.executor.PlayerHandlerThread;
@@ -27,12 +29,12 @@ public final class LoginPacketsDecoder extends Decoder {
 		// Logger.log(this, "LOGIN PACKET = > PacketId =:" + opcode);
 
 		if (stream.getRemaining() < length)
-			return 0;
+			return -3;
 
 		session.setDecoder(-1);
 		if (stream.readInt() != Settings.MAJOR_VERSION) {
 			session.getLoginPackets().sendClosingPacket(6);
-			return -1;
+			return -7;
 		}
 		byte[] d = new byte[length];
 		stream.readBytes(d);
@@ -43,7 +45,7 @@ public final class LoginPacketsDecoder extends Decoder {
 			decodeLobbyLogin(new InputStream(d));
 		else {
 			session.getChannel().close();
-			return -1;
+			return -7;
 		}
 
 		return stream.getOffset();
@@ -322,5 +324,101 @@ public final class LoginPacketsDecoder extends Decoder {
 		PlayerHandlerThread.addSession(session, isaacKeys, false, username,
 				password, MACAddress, displayMode, screenWidth, screenHeight,
 				mInformation);
+	}
+
+	@SuppressWarnings({ "unused", "unlikely-arg-type" })
+	public void decodeAccountCreation(InputStream stream, boolean isPreWorked) {
+		if(!isPreWorked) {
+		  // int opcode = stream.readUnsignedByte();
+		  int length = stream.readUnsignedShort();
+		  // Logger.log(this, "LOGIN PACKET = > PacketId =:" + opcode);
+		
+		  if (stream.getRemaining() < length)
+		    return;
+		
+		  // session.setDecoder(-1);
+		  if (stream.readShort() != Settings.MAJOR_VERSION) {
+		    session.getLoginPackets().sendClosingPacket(6);
+		    return;
+		  }
+		  if (stream.readShort() != Settings.MINOR_VERSION) {
+		    session.getLoginPackets().sendClosingPacket(6);
+		    return;
+		  }      
+		}
+		int rsaBlockSize = stream.readShort();
+		if (rsaBlockSize > stream.getRemaining()) {
+			return;
+		}
+		byte[] data = new byte[rsaBlockSize];
+		stream.readBytes(data, 0, rsaBlockSize);
+		InputStream rsaStream = new InputStream(Utils.cryptRSA(data, Settings.PRIVATE_EXPONENT, Settings.MODULUS));
+		if (rsaStream.readUnsignedByte() != 10) {
+			return;
+		}
+		int[] isaacKeys = new int[4];
+		for (int i = 0; i < isaacKeys.length; i++)
+			isaacKeys[i] = rsaStream.readInt();
+    
+		int[] randoms = new int[10];
+		for (int i = 0;i < 10;i++) {
+			randoms[i] = rsaStream.readInt();
+		}
+		rsaStream.readShort();
+		
+		stream.xteaDecrypt(isaacKeys, stream.getOffset(), stream.getLength());
+    
+		String token = stream.readString();
+		if (!token.equals(Settings.GRAB_SERVER_TOKEN)) {
+			session.getLoginPackets().sendClosingPacket(10);
+			System.out.println(token + " does not equal "
+					+ Settings.GRAB_SERVER_TOKEN);
+			return;
+		}
+		stream.readShort();
+		stream.readInt(); // isaac first
+		stream.readInt(); // isaac second
+		stream.readString();
+		int locale = stream.readByte(); // lang
+		int game = stream.readByte(); // shard
+		stream.skip(24); // uid
+		int string = stream.readByte();
+		String _str;
+		if (string == 1)
+			_str = stream.readString();
+    
+		MachineInformation mInformation = decodeMachineInformation(stream);
+    
+    
+		// TODO make right creation !!!
+		String username = "user" + randoms[0];
+		String password = "12345";
+		String MACAddress = "";
+//    
+//		PlayerHandlerThread.addSession(session, isaacKeys, true, username,
+//			password, MACAddress, 0, 0, 0, mInformation);
+		
+		 Player player = new Player(session);
+		 player.init(session, true, username, username, MACAddress, "", 0, 0, false, false, false, false, false, false, 0, 0, 0, 0, mInformation, new IsaacKeyPair(isaacKeys));
+		 // session.getLoginPackets().sendLobbyDetails(player);
+		 session.setDecoder(3, player);
+		 session.setEncoder(2, player);
+		// player.startLobby();
+
+		/*
+		Session session, boolean lobby, String username,
+		String displayName, String lastGameMAC, String email, int rights,
+		int messageIcon, boolean masterLogin, boolean donator,
+		boolean extremeDonator, boolean support, boolean gfxDesigner,
+		boolean muted, long lastVote, int displayMode, int screenWidth,
+		int screenHeight, MachineInformation machineInformation,
+		*/
+		
+		// player.getPackets().sendEquipment();
+		//PlayerLook.openCharacterCustomizing(player, true);
+		// player.getPackets().sendAppearenceLook();
+
+		player.sendLobbyVars();
+		PlayerLook.openCharacterCustomizing(player, true);
 	}
 }

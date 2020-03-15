@@ -6,13 +6,13 @@ import java.util.List;
 import net.nocturne.game.item.Item;
 import net.nocturne.game.player.dialogues.Dialogue;
 
-public class POHShelvesDialouge extends Dialogue {
+public class LarderDialogue extends Dialogue {
 
-	private static final int[] LARDER_ITEMS = { 7688, 7702, 1980, 1919, 1923,
-			2313, 1931, 1949 };
-	private static final String[] LARDER_NAMES = { "Kettle", "Teapot",
-			"Tea Cup", "Beer Glass", "Bowl", "Pie dish", "Empty pot",
-			"Chef's Hat" };
+	private static final int[] LARDER_ITEMS = { 7738, 1927, 1944, 1933, 1942,
+			1550, 1957, 1985 };
+	private static final String[] LARDER_NAMES = { "Tea leaves",
+			"Bucket of Milk", "Eggs", "Pot of Flour", "Potato", "Garlic",
+			"Onion", "Cheese" };
 
 	private final List<String> currentOptions = new LinkedList<String>();
 	private int max_index;
@@ -20,18 +20,19 @@ public class POHShelvesDialouge extends Dialogue {
 	@Override
 	public void start() {
 		int objectId = (int) this.parameters[0];
-		max_index = objectId - 13543;
+		max_index = objectId == 13566 ? 5 : objectId == 13567 ? 7 : 2;
 		for (int i = 0; i < max_index; i++)
 			currentOptions.add(LARDER_NAMES[i]);
 		if (currentOptions.size() >= 4) {
-			currentOptions.add(4, max_index == 8 ? "Next Page" : "Nothing.");
+			currentOptions.add(4, max_index == 7 ? "Next Page" : "Nothing.");
 			currentOptions.add("Previous Options");
 		}
 		sendOptions(false);
 	}
 
 	private void sendOptions(boolean secondOptions) {
-		String[] strings = new String[max_index > 5 ? 5 : max_index];
+		String[] strings = new String[max_index > 5 ? secondOptions ? 4 : 5
+				: max_index];
 		System.arraycopy(currentOptions.toArray(new String[1]),
 				secondOptions ? 5 : 0, strings, 0, strings.length);
 		sendOptionsDialogue("Please select an item", strings);
@@ -46,15 +47,23 @@ public class POHShelvesDialouge extends Dialogue {
 	@Override
 	public void run(int interfaceId, int componentId, int slotId) {
 		if (stage == 0 || stage == -1) {
-			if (componentId != OPTION_5) {
+			if (componentId != OPTION_5 && stage == -1
+					|| (componentId != OPTION_4 && stage == 0)) {
 				addItem(componentId == 11 ? 0 : componentId - 12, stage == 0);
 			} else {
 				if (componentId == OPTION_5) {
 					if (currentOptions.get(4).equals("Nothing."))
 						end();
 					else
-						sendOptions(stage == -1);
-					stage = (byte) (stage == 0 ? -1 : 0);
+						sendOptions(true);
+					stage = 0;
+				} else if (componentId == OPTION_4) {
+					if (stage == 0) {
+						sendOptions(false);
+						stage = -1;
+					} else if (stage == 1) {
+						addItem(3, false);
+					}
 				}
 			}
 		}
