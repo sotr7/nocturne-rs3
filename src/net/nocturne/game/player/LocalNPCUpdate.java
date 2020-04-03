@@ -177,7 +177,8 @@ public final class LocalNPCUpdate {
 		if (maskData >= 0xffffff)
 			maskData |= 0x400000;
 
-		data.writeShort(0); // rs doesnt use this lol
+		int _startPos = data.getOffset();
+		data.writeShort(0); // update length will be here
 		data.writeByte(maskData);
 
 		if (maskData >= 0xff)
@@ -221,6 +222,11 @@ public final class LocalNPCUpdate {
 			applyAnimationMask(n, data);
 		if (n.getNextForceMovement() != null)
 			applyForceMovementMask(n, data);
+
+		int _endPos = data.getOffset();
+		data.setOffset(_startPos);
+		data.writeShort(_endPos - _startPos - 2);
+		data.setOffset(_endPos);
 	}
 
 	private void applyTargetInformationMask(NPC n, OutputStream data) {

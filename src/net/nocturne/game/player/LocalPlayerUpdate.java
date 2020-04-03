@@ -427,7 +427,8 @@ public final class LocalPlayerUpdate {
 		if (maskData >= 0xffff)
 			maskData |= 0x800;
 
-		data.writeShort(0); // rs doesnt use this lol
+		int _startPos = data.getOffset();
+		data.writeShort(0); // update length will be here
 		data.writeByte(maskData);
 
 		if (maskData >= 0xff)
@@ -471,6 +472,11 @@ public final class LocalPlayerUpdate {
 			applyAppearanceMask(p, data);
 		if (!p.getNextHits().isEmpty() || !p.getNextHitBars().isEmpty())
 			applyHitsMask(p, data);
+
+		int _endPos = data.getOffset();
+		data.setOffset(_startPos);
+		data.writeShort(_endPos - _startPos - 2);
+		data.setOffset(_endPos);
 	}
 
 	private void applyColourMask(Player p, OutputStream data) {
